@@ -1,10 +1,33 @@
 import BreadCrumb from "@/app/_components/breadcrumb";
+import { redirect } from "next/navigation";
+import { db } from "@/db";
 
 export default function SnippetCreatePage() {
+  async function createSnippet(formData: FormData) {
+    // This needs to be a server action!
+    "use server";
+
+    // Check the user's inputs and make sure they're valid
+    const title = formData.get("title") as string;
+    const code = formData.get("code") as string;
+
+    // Create a new record in the database
+    const snippet = await db.snippet.create({
+      data: {
+        title: title,
+        code: code,
+      },
+    });
+    console.log(snippet);
+
+    // Redirect the user back to the root route
+    redirect("/");
+  }
+
   return (
     <>
       <BreadCrumb pages={["Home", "Snippets", "New"]} />
-      <form>
+      <form action={createSnippet}>
         <div className="md:px-20 p-6">
           <div className=" bg-white rounded-md px-6 py-10 max-w-2xl mx-auto shadow-2xl">
             <h1 className="text-center text-2xl font-semibold text-gray-600 mb-10 uppercase">
@@ -21,6 +44,7 @@ export default function SnippetCreatePage() {
                 <input
                   type="text"
                   id="title"
+                  name="title"
                   className="block w-full p-3 mt-2 text-gray-700 bg-gray-100 appearance-none focus:outline-none focus:bg-gray-300 focus:shadow-inner rounded-md"
                   required
                 />
@@ -34,6 +58,7 @@ export default function SnippetCreatePage() {
                 </label>
                 <textarea
                   id="code"
+                  name="code"
                   cols={30}
                   rows={10}
                   className="block w-full p-3 mt-2 text-gray-700 bg-gray-100 appearance-none focus:outline-none focus:bg-gray-300 focus:shadow-inner rounded-md"
