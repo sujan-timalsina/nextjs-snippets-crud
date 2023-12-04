@@ -1,8 +1,11 @@
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 import BreadCrumb from "./_components/breadcrumb";
+import { db } from "@/db";
 
-export default function Home() {
+export default async function Home() {
+  const snippets = await db.snippet.findMany();
+
   return (
     <>
       <BreadCrumb pages={["Home", "Snippets"]} />
@@ -42,28 +45,25 @@ export default function Home() {
             </thead>
 
             <tbody>
-              <tr>
-                <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 ">
-                  /argon/
-                </th>
-                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ">
-                  4,569
-                </td>
-                <td className="border-t-0 px-6 align-center border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  340
-                </td>
-              </tr>
-              <tr>
-                <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700">
-                  /argon/index.html
-                </th>
-                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  3,985
-                </td>
-                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  319
-                </td>
-              </tr>
+              {snippets.map((snippet, index) => (
+                <tr key={`tr-snippet-${snippet.id}`}>
+                  <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700">
+                    {index + 1}
+                  </th>
+                  <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    {snippet.title}
+                  </td>
+                  <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <Link
+                      href={`/snippets/${snippet.id}`}
+                      className="text-2xl text-indigo-600"
+                      title="View"
+                    >
+                      &#128065;
+                    </Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
