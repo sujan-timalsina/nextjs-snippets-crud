@@ -1,5 +1,6 @@
 import BreadCrumb from "@/app/_components/breadcrumb";
 import { db } from "@/db";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type ViewSnippetPageType = {
@@ -8,21 +9,16 @@ type ViewSnippetPageType = {
   };
 };
 export default async function ViewSnippetPage({ params }: ViewSnippetPageType) {
-  const id = parseInt(params.id); // or Number(params.id)
-  let snippet;
-  try {
-    snippet = await db.snippet.findUniqueOrThrow({
-      where: {
-        id: id,
-      },
-    });
-  } catch (error: any) {
-    // error is object with keys: 'name', 'code', 'clientVersion', 'meta'
-    if (error.name === "NotFoundError") {
-      notFound();
-    } else {
-      // some toastify message with error occurred
-    }
+  // await new Promise((r) => setTimeout(r, 2000));
+  const id = parseInt(params.id);
+  const snippet = await db.snippet.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (snippet == null) {
+    notFound();
   }
 
   async function deleteSnippet(id: number) {
@@ -40,27 +36,22 @@ export default async function ViewSnippetPage({ params }: ViewSnippetPageType) {
       <BreadCrumb pages={["Home", "Snippet", "View"]} />
       <div className="container m-auto flex flex-col gap-5 my-8 max-w-3xl">
         <div className="flex justify-between">
-          <div>{snippet?.title}</div>
+          <div>{snippet.title}</div>
           <div>
-            <button className="bg-indigo-500 py-1 px-3 text-white rounded-md mx-2">
+            <Link
+              className="bg-indigo-500 py-1 px-3 text-white rounded-md mx-2"
+              href={`/snippets/${snippet.id}/edit`}
+            >
               Edit
-            </button>
+            </Link>
             <button className="bg-red-500 py-1 px-3 text-white rounded-md mx-2">
               Delete
             </button>
           </div>
         </div>
-        <div>
-          <textarea
-            id="code"
-            name="code"
-            value={snippet?.code}
-            cols={30}
-            rows={10}
-            className="block w-full p-3 mt-2 text-gray-700 bg-gray-100 appearance-none focus:outline-none focus:bg-gray-300 focus:shadow-inner rounded-md"
-            disabled
-          ></textarea>
-        </div>
+        <pre className="p-3 border rounded bg-gray-200 border-gray-200">
+          <code>{snippet.code}</code>
+        </pre>
       </div>
     </>
   );

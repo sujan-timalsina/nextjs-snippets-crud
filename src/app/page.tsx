@@ -55,7 +55,7 @@ export default async function Home() {
                   </td>
                   <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                     <Link
-                      href={`/snippets/${snippet.id}`}
+                      href={"/snippets/" + snippet.id}
                       className="text-2xl text-indigo-600"
                       title="View"
                     >
