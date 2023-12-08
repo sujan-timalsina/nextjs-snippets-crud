@@ -2,6 +2,7 @@ import BreadCrumb from "@/app/_components/breadcrumb";
 import { db } from "@/db";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import * as actions from "@/app/_actions";
 
 type ViewSnippetPageType = {
   params: {
@@ -21,15 +22,7 @@ export default async function ViewSnippetPage({ params }: ViewSnippetPageType) {
     notFound();
   }
 
-  async function deleteSnippet(id: number) {
-    "use server";
-    const snippet = await db.snippet.delete({
-      where: {
-        id: id,
-      },
-    });
-    console.log(snippet);
-  }
+  const deleteSnippetAction = actions.deleteSnippet.bind(null, snippet.id);
 
   return (
     <>
@@ -39,14 +32,16 @@ export default async function ViewSnippetPage({ params }: ViewSnippetPageType) {
           <div>{snippet.title}</div>
           <div>
             <Link
-              className="bg-indigo-500 py-1 px-3 text-white rounded-md mx-2"
+              className="bg-indigo-500 p-2 text-white rounded-md mx-2"
               href={`/snippets/${snippet.id}/edit`}
             >
               Edit
             </Link>
-            <button className="bg-red-500 py-1 px-3 text-white rounded-md mx-2">
-              Delete
-            </button>
+            <form action={deleteSnippetAction} className="inline-block">
+              <button className="bg-red-500 p-2 text-white rounded-md mx-2 text-sm">
+                Delete
+              </button>
+            </form>
           </div>
         </div>
         <pre className="p-3 border rounded bg-gray-200 border-gray-200">

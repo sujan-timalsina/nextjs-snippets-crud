@@ -64,6 +64,16 @@ export default async function Home() {
                   </td>
                 </tr>
               ))}
+              {snippets.length === 0 && (
+                <tr>
+                  <td
+                    className="text-red-500 text-center py-6 font-semibold"
+                    colSpan={3}
+                  >
+                    Snippets Not Found!
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
